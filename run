@@ -55,13 +55,15 @@ Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
 fi
 
+export VERTX_HOME=$APP_HOME/bin/vertx
 export VERTX_MODS=$APP_MODS
 info ".
 ***********************************************
-* APP_HOME : $APP_HOME
-* APP_MODS : $APP_MODS
-* JAVA_HOME : $JAVA_HOME
-* CONF_FILE : $CONF_FILE
+* APP_HOME   : $APP_HOME
+* APP_MODS   : $APP_MODS
+* VERTX_HOME : $VERTX_HOME
+* JAVA_HOME  : $JAVA_HOME
+* CONF_FILE  : $CONF_FILE
 ***********************************************
 ."
 

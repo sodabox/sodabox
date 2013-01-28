@@ -51,29 +51,22 @@ public class SessionManager extends BusModBase implements Handler<Message<JsonOb
 			JedisPoolConfig config = new JedisPoolConfig();
 			config.testOnBorrow = true;
 
+			String host = sessionConf.getString("host");
+			int port 	= sessionConf.getInteger("port").intValue();
+			
 			JedisPool jedisPool;
-			if( StringUtils.isEmpty(sessionConf.getString("host")) ){
+			if( StringUtils.isEmpty(host) ){
 				jedisPool = new JedisPool(config, "localhost");
 			}else{
-				jedisPool = new JedisPool(config, 
-						sessionConf.getString("host"), 
-						sessionConf.getInteger("port").intValue());
+				jedisPool = new JedisPool(config, host, port);
 			}
-
+			DEBUG("session storage CONNECTED - %s:%d", host, port);
+			
 			this.redisPool = jedisPool;
 		}
 
-
 		eb.registerHandler(address, this);
 	}
-
-	protected void DEBUG(String message, Object... args ){
-		if(log != null) log.debug("[MOD::NODE] "+String.format(message, args));
-	}
-	protected void ERROR(String message, Object... args ){
-		if(log != null) log.error("[MOD::NODE] "+String.format(message, args));
-	}
-
 
 	@Override
 	public void stop() {
@@ -93,7 +86,7 @@ public class SessionManager extends BusModBase implements Handler<Message<JsonOb
 
 			ServerNode serverNode = null;
 
-			if(SESSION_MANAGER.ACTION.IN.equals(action)){
+			if(SESSION_MANAGER.ACTION.IN.equals(action)){ // "in"
 
 				if(this.redisPool == null){
 
@@ -116,11 +109,12 @@ public class SessionManager extends BusModBase implements Handler<Message<JsonOb
 
 						// not existed in session redis.
 						if(channelAndCount == null){
-
+							
 							serverNode = serverNodeManager.getNode(refer);
 
-							jedis.hsetnx(key, field, serverNode.getChannel()+"^0"); // init channel and count '0'
-
+							DEBUG(" ACTION[in] (Not Existed in Session Storage) - %s", serverNode.getChannel());
+							
+							jedis.hset(key, field, serverNode.getChannel()+"^0"); // init channel and count '0'
 
 						}else{
 
@@ -128,17 +122,20 @@ public class SessionManager extends BusModBase implements Handler<Message<JsonOb
 							//int 	count  	= Integer.parseInt(channelAndCount.substring(channelAndCount.indexOf("^")+1));
 
 							serverNode = serverNodeManager.getNodeByKey(channel);
-
+							
 							if(serverNode == null){ // when the target server is crushed!!
 
 								// delete session info.
 								jedis.hdel(key, field);
 
+								DEBUG(" ACTION[in] (CRUSHED!!! retry to get new Node)");
+								
 								serverNode = serverNodeManager.getNode(refer);
-
-								if(serverNode != null) jedis.hsetnx(key, field, serverNode.getChannel()+"^0"); //channel and count '0'
+								if(serverNode != null) jedis.hset(key, field, serverNode.getChannel()+"^0"); //channel and count '0'
 
 							}
+
+							DEBUG(" ACTION[in] (Existed) - %s", serverNode.getChannel());
 						}
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -270,4 +267,12 @@ public class SessionManager extends BusModBase implements Handler<Message<JsonOb
 
 	}
 
+	protected void DEBUG(String message, Object... args ){
+		if(log != null) log.debug("[MOD::NODE] "+String.format(message, args));
+	}
+	protected void ERROR(String message, Object... args ){
+		if(log != null) log.error("[MOD::NODE] "+String.format(message, args));
+	}
+	
 }
+

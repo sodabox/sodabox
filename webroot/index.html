@@ -129,19 +129,19 @@
   <h2 class="page-header"><i class="icon-ok"></i>  Features </h2>
   <div class="row">
     <div class="span4">
-      <h4><i class="icon-magic"></i> with Social Media</h4>
-      <i class="icon-twitter icon-4x pull-left icon-muted"></i>
-      <i class="icon-facebook icon-4x pull-left icon-muted"></i>
-      If visiters was sign in Facebook of Twitter, visiters can chat with each others
+      <h4><i class="icon-magic"></i> with Social Network Service</h4>
+      <i class="icon-twitter icon-4x pull-left"></i>
+      <i class="icon-facebook icon-4x pull-left"></i>
+      Just sign in Facebook of Twitter, visiters can chat with each others on your web pages
     </div>
     <div class="span4">
-      <h4><i class="icon-globe"></i> for Every Web Browser </h4>
-      <i class="icon-desktop icon-4x pull-left icon-muted"></i>
+      <h4><i class="icon-globe"></i> for Every Web Browsers </h4>
+      <i class="icon-desktop icon-4x pull-left"></i>
       This service fit with cross-browsers. IE 6+, chrome, safari and all mobile browsers
     </div>
     <div class="span4">
       <h4><i class="icon-user"></i> Real Online Users</h4>
-      <i class="icon-group icon-4x pull-left icon-muted"></i>
+      <i class="icon-group icon-4x pull-left"></i>
       Visiters can know how manay people are on your web page right now. It is definitly real-time page views.
     </div>
   </div>
@@ -165,7 +165,6 @@
   </div>
 </section>
 
-
 <section id="install">
   <h2 class="page-header"><i class="icon-wrench"></i>  How to install ?</h2>
   <p>Just insert some tags in your HTML pages. It only takes a minute.</p>
@@ -179,7 +178,7 @@
     </div>
     <div class="span11">
     <p>
-      put the tags and the javascript codes below before the laster body tag in your HTML page
+      Put the tags and the javascript codes below before the laster body tag in your HTML page
     </p>
   <pre class="prettyprint linenums">&lt;script type=&quot;text/javascript&quot; src=&quot;http://www.sodabox.io/sodabox.js&quot; charset=&quot;utf-8&quot; &gt;&lt;/script&gt;
 &lt;script language=&quot;javascript&quot;&gt;
@@ -187,7 +186,7 @@
 &lt;/script&gt;</pre>
 
     <p>
-      You can preview your web page with SODABOX javascript.
+      And, You can preview your web page with SODABOX javascript.
     </p>
 
     <form action="/preview" target="_blank">
@@ -264,10 +263,14 @@
 <script src="js/jquery-1.9.0.min.js"></script>
 <script src="js/prettify.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/index.js"></script>
+<script language="javascript">
+	$(function() {
+		window.prettyPrint && prettyPrint();
+	});
+</script>
 
-<!-- SODABOX -->
+<!-- SODABOX start -->
 <script type="text/javascript" src="http://www.sodabox.io/sodabox.js" charset="utf-8"></script><script language="javascript">SODABOX.init();</script>
-
+<!-- SODABOX end -->
 </body>
 </html>

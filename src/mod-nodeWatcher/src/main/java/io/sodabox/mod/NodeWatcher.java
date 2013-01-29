@@ -51,6 +51,7 @@ public class NodeWatcher extends BusModBase implements Handler<Message<JsonObjec
 			isReady = true;
 		} catch (ZooKeeperConnectionException e) {
 			ERROR("zookeeper is not existed [%s]", zookeeperServers.encode());
+			isReady = false;
 			e.printStackTrace();
 		}
 

@@ -181,7 +181,6 @@ public class SessionManager extends BusModBase implements Handler<Message<JsonOb
 					e.printStackTrace();
 
 				} finally {
-					// TODO Auto-generated catch block
 					this.redisPool.returnResource(jedis);
 				}
 

@@ -130,6 +130,8 @@ var SODABOX_window = {
 	
 	divCloseWidth	: '100px',
 	divOpenWidth	: '300px',
+	divMaxOpenWidth	: '500px',
+	currentSize : 'MIN',
 
     isLogined       : false,
     
@@ -180,18 +182,19 @@ var SODABOX_window = {
 		this.divOpenWidth = this.getStyle(div_root, 'width');
 		
         div_root.innerHTML = 
-		'<div id="'+rootDivName+'_head" onclick="javascript:return SODABOX_window.toggleChatBoxGrowth();" class="sodabox_head" ><div id="'+rootDivName+'_title" class="sodabox_title"></div><div id="'+rootDivName+'_options" class="sodabox_options"></div><br clear="all"></div>'+
+		'<div id="'+rootDivName+'_head" onclick="javascript:return SODABOX_window.toggleChatBoxGrowth();" class="sodabox_head" >'+
+		'<div id="'+rootDivName+'_title" class="sodabox_title"></div><div id="'+rootDivName+'_options" class="sodabox_options"></div><div id="'+rootDivName+'_size" class="sodabox_options"></div><br clear="all"></div>'+
 		'<div id="'+rootDivName+'_content" class="sodabox_content"></div>'+
 		'<div id="'+rootDivName+'_input" class="sodabox_input"><textarea id="'+rootDivName+'_textarea" class="sodabox_textarea" onkeydown="javascript:return SODABOX_window.inputChatMessage(event,this);" ></textarea></div>'+
         '<div id="'+rootDivName+'_login" class="sodabox_login"><span>Connect with</span> '+
-        '<a href="#" onclick="return !window.open(SODABOX.getOauthUrl(\'facebook\'),\'SODABOX_OAUTH\',\'menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes,width=800,height=450\')" target="_blank"><img src="'+this.imageServer+'/img/facebook.png" style="cursor:pointer;" /></a>&nbsp;'+
-        '<a href="#" onclick="return !window.open(SODABOX.getOauthUrl(\'twitter\'),\'SODABOX_OAUTH\',\'menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes,width=800,height=450\')" target="_blank"><img src="'+this.imageServer+'/img/twitter.png" style="cursor:pointer;" /></a>&nbsp;'+
+        '<a href="#" class="sodabox_tooltip" title="login with facebook" onclick="return !window.open(SODABOX.getOauthUrl(\'facebook\'),\'SODABOX_OAUTH\',\'menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes,width=800,height=450\')" target="_blank"><img src="'+this.imageServer+'/img/facebook.png" width="30px" style="cursor:pointer;" /></a>&nbsp;'+
+        '<a href="#" class="sodabox_tooltip" title="login with twitter" onclick="return !window.open(SODABOX.getOauthUrl(\'twitter\'),\'SODABOX_OAUTH\',\'menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes,width=800,height=450\')" target="_blank"><img src="'+this.imageServer+'/img/twitter.png" width="30px"style="cursor:pointer;" /></a>&nbsp;'+
+        '<a href="#" class="sodabox_tooltip" title="login with google" onclick="return !window.open(SODABOX.getOauthUrl(\'google\'),\'SODABOX_OAUTH\',\'menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes,width=800,height=450\')" target="_blank"><img src="'+this.imageServer+'/img/google.png" width="30px"style="cursor:pointer;" /></a>&nbsp;'+
         '</div>'
 
         var div_content = document.getElementById(rootDivName+'_content');
         var div_login = document.getElementById(rootDivName+'_login');
         var div_input = document.getElementById(rootDivName+'_input');
-        
         
         div_root.onclick = function(){
             
@@ -307,7 +310,7 @@ var SODABOX_window = {
         
         var chatDiv = document.createElement("div");
         this.addClass(chatDiv, 'sodabox_message');
-        chatDiv.innerHTML = '<span class="sodabox_systemcontent">'+message+'</span>';
+        chatDiv.innerHTML = '<span class="sodabox_systemcontent">'+this.getNowStr()+' - '+message+'</span>';
         
         div_content.appendChild(chatDiv);
         div_content.scrollTop = div_content.scrollHeight;
@@ -316,7 +319,7 @@ var SODABOX_window = {
     
     toggleChatBoxGrowth : function() {
     	
-    	if("LOGOUT" == this.eventType){
+    	if("OPTION_BUTTON" == this.eventType){
     		this.eventType = "";
     		return false;
     	}
@@ -328,9 +331,11 @@ var SODABOX_window = {
 
 			document.getElementById(this.rootDivName).style.width = this.divOpenWidth;
             document.getElementById(this.rootDivName+'_options').style.display = 'block';
+            document.getElementById(this.rootDivName+'_size').style.display = 'block';
 			document.getElementById(this.rootDivName+'_title').style["float"] = 'left';
 			document.getElementById(this.rootDivName+'_title').style.textAlign = '';
 			document.getElementById(this.rootDivName+'_title').style.width = '';
+			document.getElementById(this.rootDivName+'_head').style.padding = '7px 7px 7px 7px';
 			
             div_content.style.display = 'block';
             if(this.isLogined){
@@ -342,6 +347,7 @@ var SODABOX_window = {
                 document.getElementById(this.rootDivName+'_login').style.display = 'block';
                 document.getElementById(this.rootDivName+'_input').style.display = 'none';
             }
+            this.sizing();
 
         } else {
 
@@ -353,19 +359,19 @@ var SODABOX_window = {
             document.getElementById(this.rootDivName+'_login').style.display = 'none';
             document.getElementById(this.rootDivName+'_input').style.display = 'none';
             document.getElementById(this.rootDivName+'_options').style.display = 'none';
+            document.getElementById(this.rootDivName+'_size').style.display = 'none';
             document.getElementById(this.rootDivName+'_input').style.display = 'none';
-			
+			if(this.isIE()) document.getElementById(this.rootDivName+'_head').style.padding = '7px 0px 0px 0px';
         }
        
     },
 
     setTitleMessage : function(message){
-
         var div_title = document.getElementById(this.rootDivName+'_title');
         div_title.innerHTML = message;
     },
     
-    logined : function(){
+    logined : function(target){
         
         var div_login = document.getElementById(this.rootDivName+'_login');
         var div_input = document.getElementById(this.rootDivName+'_input');
@@ -378,19 +384,21 @@ var SODABOX_window = {
             div_input.style.display = 'none';    
         }
         
-        document.getElementById(this.rootDivName+'_options').innerHTML = '<a href="javascript:void(0)" onclick="javascript:return SODABOX.logout();"><img src="'+this.imageServer+'/img/logout.png"></a>';
+        document.getElementById(this.rootDivName+'_options').innerHTML = '<a href="javascript:void(0)" onclick="javascript:return SODABOX.logout();" class="sodabox_tooltip" title="Logout from '+target+'"><img src="'+this.imageServer+'/img/logout.png"></a>';
 
         var div_textarea = document.getElementById(this.rootDivName+'_textarea');
         div_textarea.focus();
         div_textarea.value = div_textarea.value;
         
         this.isLogined = true;
+        
+        this.setSysMessage('logined with '+target);
 
     },
 
     logout : function(){
         
-    	this.eventType = "LOGOUT";
+    	if(!this.isIE()) this.eventType = "OPTION_BUTTON";
     		
         var div_login = document.getElementById(this.rootDivName+'_login');
         var div_input = document.getElementById(this.rootDivName+'_input');
@@ -407,8 +415,26 @@ var SODABOX_window = {
         document.getElementById(this.rootDivName+'_options').innerHTML = "";
         
         this.isLogined = false;
+
+        this.setSysMessage('logout.');
         
 
+    },
+
+    sizing : function(gbn){
+    	
+    	if(gbn){
+    		if(!this.isIE()) this.eventType = "OPTION_BUTTON";
+    		this.currentSize = gbn;
+    	}
+
+    	if(this.currentSize == "MIN"){
+    		document.getElementById(this.rootDivName+'_size').innerHTML = '<a href="javascript:void(0)" onclick="javascript:return SODABOX.sizing(\'MAX\');" class="sodabox_tooltip" title="Big Size"><img src="'+this.imageServer+'/img/max.png"></a>';
+    		document.getElementById(this.rootDivName).style.width = this.divOpenWidth;
+    	}else{
+    		document.getElementById(this.rootDivName+'_size').innerHTML = '<a href="javascript:void(0)" onclick="javascript:return SODABOX.sizing(\'MIN\');" class="sodabox_tooltip" title="Small Size"><img src="'+this.imageServer+'/img/min.png"></a>';
+    		document.getElementById(this.rootDivName).style.width = this.divMaxOpenWidth;
+    	}
     },
 
     getNowStr : function(){
@@ -427,6 +453,10 @@ var SODABOX_window = {
         }
 
         return rtn;
+    },
+    
+    isIE : function(){
+    	return (/MSIE (\d+\.\d+);/.test(navigator.userAgent));
     }
     
 };
@@ -440,41 +470,7 @@ var SODABOX = (function(CONF, UTILS, WIN) {
 
     /*** PRIAVTE AREA ***/
 
-    // ########################## Private functions
-
-    var fn_tryOAuthProcess = function(strategy){
-        UTILS.loadJson(_d.urlWeb+'/user', 'SODABOX.callbackOAuth&_tryTarget='+strategy+'&SC='+_socketid+'&CN='+_d.channel);
-    };
-
-    var fn_callbackOAuth = function(data){
-
-        if(data.isAuth){
-            
-            _auth.user = data.user;
-            
-            WIN.logined(data.user.target);
-            
-            _socket.emit('join', {
-                UR : _auth.user,
-                AU : _d.authkey,
-                CN : _d.channel,
-                MG : 'JOIN',
-                r  : _d.range
-            });
-
-        }else{
-            //window.open(_d.urlApp+'/auth/' + data.tryTarget,'SODABOX_OAUTH','menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes,width=800,height=450');
-            window.open(_d.urlWeb+'/popupauth?_tryTarget='+data.tryTarget+'&SC='+_socketid+'&CN='+_d.channel,'SODABOX_OAUTH','menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes,width=800,height=450');
-
-        }
-
-    };
-
-
-    /*
-     * " Init " Processing
-     */
-    var fn_init = function(){
+	var fn_init = function(){
     	console.log(" # 1. fn_init \n\t"+JSON.stringify(CONF));
         UTILS.loadJson(CONF.httpUrl+'/node?refer='+CONF.refer, 'SODABOX.callbackInit');
     };
@@ -498,11 +494,11 @@ var SODABOX = (function(CONF, UTILS, WIN) {
         
         CONF.user = SODABOX_utils.getUserInfo();
         //console.log("USER : "+JSON.stringify(user));
-        if ( typeof CONF.user.name == "undefined") {
+        if ( typeof CONF.user.target == "undefined") {
         	CONF.isLogined = false;
         }else{
         	CONF.isLogined = true;
-        	WIN.logined();
+        	WIN.logined(CONF.user.target);
         }
         
         UTILS.loadScript("http://cdn.sockjs.org/sockjs-0.3.min.js", fn_callbackSocketCallback);
@@ -552,7 +548,7 @@ var SODABOX = (function(CONF, UTILS, WIN) {
             	UTILS.setUserInfo(resJson.user);
             	CONF.isLogined = true;
             	CONF.user = resJson.user;
-            	WIN.logined();
+            	WIN.logined(CONF.user.target);
 
                 var reqJson = {
                 	action 	: "JOIN",
@@ -627,12 +623,6 @@ var SODABOX = (function(CONF, UTILS, WIN) {
         callbackSocketCallback : function(data){
         	fn_callbackSocketCallback(data);
         },
-        tryOAuth : function(target) {
-            fn_tryOAuthProcess(target);
-        },
-        callbackOAuth : function(data){
-            fn_callbackOAuth(data);
-        },
         sendMessage : function(message){
             fn_sendMessage(message);
         },
@@ -645,10 +635,11 @@ var SODABOX = (function(CONF, UTILS, WIN) {
         getOauthUrl : function(targetName){
         	
             return CONF.httpUrl + '/auth?target='+targetName+'&channel='+CONF.serverInfo.channel+'&socketId='+CONF.socketId+'&refer='+CONF.refer;
+        },
+        sizing : function(gbn){
+        	WIN.sizing(gbn);
         }
 
     };
 
-})(SODABOX_conf, SODABOX_utils, SODABOX_window); // 익명 함수를 바로 실행
-
-
+})(SODABOX_conf, SODABOX_utils, SODABOX_window);

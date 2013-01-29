@@ -1,7 +1,6 @@
 package io.sodabox.mod;
 
 
-import io.sodabox.common.api.NODE_WATCHER;
 import io.sodabox.common.api.PUBLISH_MANAGER;
 import io.sodabox.common.server.NodeManager;
 import io.sodabox.common.server.RedisNodeManager;
@@ -81,7 +80,7 @@ public class PublishManager extends BusModBase implements Handler<Message<JsonOb
 
 				JsonObject json = new JsonObject();
 				json.putNumber("result", 	result);
-				
+
 				sendOK(message, json);
 			}
 

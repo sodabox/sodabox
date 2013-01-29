@@ -11,7 +11,7 @@
 .sodabox_head {
 	cursor:hand;
 	background-color: #2d2d2d;
-	padding:7px;
+	padding: 7px;
 	color: #ffffff;
 	border-right:1px solid #2d2d2d;
 	border-left:1px solid #2d2d2d;
@@ -95,7 +95,13 @@
 
 .sodabox_messagetime{
 	color:#666666;
-	font-size:70%;
+	font-size:80%;
+}
+
+.sodabox_systemcontent {
+	/*font-style:italic; */
+	font-size:80%;
+	color: #808080;
 }
 
 .sodabox_info {
@@ -131,3 +137,31 @@
 	font-weight: bold;
 	float: left;
 }
+
+ .sodabox_tooltip{display:inline;position:relative}
+ .sodabox_tooltip:hover{text-decoration:none}
+ .sodabox_tooltip:hover:after{
+   background:#111;
+   background:rgba(0,0,0,.8);
+   border-radius:5px;
+   bottom:21px;
+   color:#fff;
+   content:attr(title);
+   display:block;
+   left:-30px;
+   padding:5px 15px;
+   position:absolute;
+   white-space:nowrap;
+   z-index:99998
+  }
+  .sodabox_tooltip:hover:before{
+    border:solid;
+    border-color:#111 transparent;
+    border-width:6px 6px 0 6px;
+    bottom:15px;
+    content:"";
+    display:block;
+    left:65%;
+    position:absolute;
+    z-index:99999
+   }
